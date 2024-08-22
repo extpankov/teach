@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Распечатка оценок</title>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body>
+    <div class="wrapper">
+        <h1>Распечатать оценки</h1>
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+                <div class="file-drop-area">
+                    <div class="margin-area">
+                        <span class="fake-btn">Выберите файл</span>
+                        <span class="file-msg">или перетащите его сюда</span>
+                        <input class="file-input" type="file" multiple>
+                    </div>
+                </div>
+            </form>
+    </div>
+</body>
+</html>

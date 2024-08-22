@@ -1,0 +1,133 @@
+/* rubik-300 - cyrillic_latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 300;
+    src: url('fonts/rubik-v28-cyrillic_latin-300.woff2') format('woff2');
+}
+  
+/* rubik-500 - cyrillic_latin */
+@font-face {
+    font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+    font-family: 'Rubik';
+    font-style: normal;
+    font-weight: 500;
+    src: url('fonts/rubik-v28-cyrillic_latin-500.woff2') format('woff2');
+}
+
+@page {
+    size: 120mm 75mm;
+    margin: 0;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Rubik", 'Courier New', Courier, monospace;
+    font-weight: 300;
+}
+
+.card {
+    /* border: 1px solid black; */
+    width: 120mm;
+    height: 75mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: url('https://avatars.mds.yandex.net/i?id=a7027a59f34e5893d7c92c66ed1eb08e853ed5d80e58bfd7-11953055-images-thumbs&n=13');
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: grayscale(1);
+    background-position: center center;
+    -webkit-print-color-adjust: exact;
+}
+
+.container {
+    margin: 0 10px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.card h2 {
+    margin: 0.3rem 0;
+    font-weight: 500;
+    font-size: 1.3rem;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+}
+
+.header__el {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.header__el span {
+    font-weight: 500;
+    flex-basis: 100%;
+}
+
+.line {
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 1);
+    margin: 5px 0;
+}
+
+.marks__container {
+    flex-basis: 100%;
+}
+
+.marks__container img, svg {
+    width: 12px;
+    margin: 0 5px;
+}
+
+.marks__container ul {
+    padding: 0;
+    margin: 0;
+}
+
+strong.name::before {
+    content: '•';
+    margin-right: 0.3rem;
+  }
+
+.marks__container ul li {
+    display: flex;
+    justify-content: space-between;
+}
+
+.marks__header {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.1rem;
+}
+
+.marks__header h5 {
+    margin: 0;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+}
+
+.qr-code-block {
+    display: flex;
+    margin: 0 10px;
+}
+
+.qr-code-block p {
+    margin: auto 0;
+    font-size: 12px;
+    text-align: center;
+    width: 100%;
+}
+
+.qr-code-block img {
+    width: 50px;
+    height: 50px;
+}

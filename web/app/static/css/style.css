@@ -1,0 +1,65 @@
+@import url('fonts.css');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Roboto";
+}
+
+.wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.wrapper h1 {
+    flex-basis: 100%;
+    text-align: center;
+}
+
+.file-drop-area {
+    position: relative;
+    display: inline-block;
+    border: 2px dashed #ccc;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    width: 40vw;
+}
+
+.margin-area {
+  margin: 25px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.file-drop-area:hover {
+    background-color: #f8f8f8;
+}
+
+.fake-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 8px 15px;
+    margin-right: 10px;
+    border-radius: 3px;
+}
+
+.file-msg {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}

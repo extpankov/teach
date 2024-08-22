@@ -1,0 +1,73 @@
+@page {
+    size: 75mm 120mm;
+    margin: 0;
+}
+
+/* roboto-flex-regular - cyrillic_latin */
+@font-face {
+    font-family: 'Roboto Flex';
+    font-style: normal;
+    font-weight: normal;
+    src: url('OSITA') format('truetype'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  
+
+html, body {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Roboto Flex", "Courier New";
+    font-size: 13px;
+}
+
+.card {
+    /*size: 75mm 120mm;*/
+    /*width: 297.5px;*/
+    height: 120mm;
+    /*border: 1px solid black;*/
+    margin-left: 2px;
+}
+
+.header {
+    margin: 7px;
+}
+
+.header__title {
+    margin-bottom: 5px;
+    font-size: 13px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.header__line-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.header__line {
+    content: "";
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+    width: 80%;
+    height: 1px;
+    background-color: black;
+}
+
+.body {
+    margin: 7px;
+}
+
+.subject__name-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.subject__ico {
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+}
+
+.subject__marks {
+    text-align: center;
+}
