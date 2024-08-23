@@ -5,11 +5,12 @@ import os
 import qrcode
 from io import BytesIO
 import base64
-from app.models import Student  # Импорт модели Student для получения уникального токена
-
+import json
+from app.models import StudentRecord  # Import the StudentRecord model
 
 class PDFGenerator:
     def __init__(self, path, output_path):
+        print("PDFGenerator started")
         self.dataset = pd.DataFrame(get_dataset(path))
         self.output_path = output_path
 
@@ -41,21 +42,12 @@ class PDFGenerator:
     def get_arrow(self):
         with open("html/icons/svg/arrow-right-solid.svg", "r") as f:
             svg = f.read()
-
         return svg
 
     def reformat_date(self, date):
-        # Исходная строка с датами
-
-        # Регулярное выражение для поиска дат
         pattern = r"(\d{2}\.\d{2}\.)(\d{4})"
-
-        # Функция замены, сохраняющая день и месяц, но сокращающая год до двух цифр
         replacement = lambda x: x.group(1) + x.group(2)[-2:]
-
-        # Производим замену в исходной строке
         result = re.sub(pattern, replacement, date)
-
         return result
 
     def get_subject_object(self, data):
@@ -72,8 +64,7 @@ class PDFGenerator:
 
     @staticmethod
     def generate_qr_code(unique_token):
-        # Генерация QR-кода с уникальной ссылкой
-        url = f"http://example.com/student/{unique_token}"  # Используем уникальный токен студента
+        url = f"https://teach.extpankov.ru/student/{unique_token}"  # Replace with the actual domain
         print(f"link: {url}")
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
         qr.add_data(url)
@@ -86,9 +77,9 @@ class PDFGenerator:
 
         return f'<img src="data:image/png;base64,{img_str}" alt="QR Code" />'
 
-    def get_qr_code_block(self, data, student):
-        subjects = ", ".join([self.replace_subjname(d["subj_name"]) for d in data])
-        qr_code_image = self.generate_qr_code(student.unique_token)  # Передаем уникальный токен студента
+    def get_qr_code_block(self, data, student_record):
+        subjects = ", ".join([f"<b>{self.replace_subjname(d['subj_name'])}</b>" for d in data])
+        qr_code_image = self.generate_qr_code(student_record.unique_token)  # Use the unique token from StudentRecord
 
         if subjects == "":
             return f"""
@@ -105,12 +96,30 @@ class PDFGenerator:
             </div>
             """
 
-    def create_html_card(self, row):
-        # Найти студента по имени и фамилии
-        student = Student.query.filter_by(first_name=row["name"].split()[1], last_name=row["name"].split()[0]).first()
+    def create_html_card(self, row, top):
+        # Найти запись студента по имени
+        student_record = StudentRecord.query.filter_by(student_name=row["name"], class_name=row["class"]).order_by(
+            StudentRecord.id.desc()).first()
+
+        if not student_record:
+            return "<p>Запись студента не найдена</p>"
+
+        # Преобразовать JSON-строку с оценками обратно в список
+        grades = json.loads(student_record.grades)
+
+        # Устанавливаем фон в зависимости от места в топе
+        background_image = ""
+        if not top.empty:  # Проверяем, что DataFrame не пустой
+            # Сравнение по индексам
+            if row["name"] == top.iloc[0]["name"]:
+                background_image = 'background-image: url(https://teach.extpankov.ru/prize/1);'
+            elif len(top) > 1 and row["name"] == top.iloc[1]["name"]:
+                background_image = 'background-image: url(https://teach.extpankov.ru/prize/2);'
+            elif len(top) > 2 and row["name"] == top.iloc[2]["name"]:
+                background_image = 'background-image: url(https://teach.extpankov.ru/prize/3);'
 
         return f"""
-        <div class="card">
+        <div class="card" style="{background_image}">
             <div class="container">
                 <h2 class="card_name">Промежуточная успеваемость учащегося</h2>
                 <div class="header">
@@ -135,17 +144,24 @@ class PDFGenerator:
                     </div>
                     <div class="marks__body">
                         <ul>
-                            {"".join([self.get_subject_object(data) for data in row["data"][:7]])}
+                            {"".join([self.get_subject_object(data) for data in grades[:7]])}
                         </ul>
                     </div>
                 </div>
             </div>
-            {self.get_qr_code_block(row["data"][7:], student)}
+            {self.get_qr_code_block(grades[7:], student_record)}
         </div>
         """
 
     def generate_html(self):
-        cards_html = ''.join([self.create_html_card(row) for index, row in self.dataset.iterrows()])
+        # Сортируем учеников по среднему баллу в порядке убывания
+        sorted_dataset = self.dataset.sort_values(by="average", ascending=False)
+
+        # Извлекаем топ-3 учеников
+        top_3_students = sorted_dataset.head(3)
+
+        # Генерируем HTML-карточки для всех учеников, передавая информацию о топ-3
+        cards_html = ''.join([self.create_html_card(row, top_3_students) for index, row in self.dataset.iterrows()])
 
         html_content = f"""
         <html lang="ru">

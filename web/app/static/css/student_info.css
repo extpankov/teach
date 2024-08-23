@@ -1,0 +1,44 @@
+html, body {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Roboto", sans-serif;
+    background-color: #1e1e1e;
+    color: white;
+    text-align: center;
+}
+
+body {
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+
+a {
+    color: white;
+}
+
+.main-heading {
+    text-align: center;
+}
+
+.student-info {
+    text-align: center;
+}
+
+.student-grades {
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+
+.comment {
+    padding: 10px 0 20px 0;
+}
+
+.history-table {
+    width: 100%;
+}

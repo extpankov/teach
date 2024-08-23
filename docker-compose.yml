@@ -3,17 +3,14 @@ services:
     build:
       context: ./web
     ports:
-      - "5001:5001"
-    volumes:
-      - ./web:/app
+      - "80:5001"
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=development
-      - MYSQL_HOST=db
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASS}
-      - MYSQL_DB=project
-    depends_on:
-      - db
-volumes:
-  mysql_data:
+    volumes:
+      - ./web:/app
+    networks:
+      - webnet
+
+networks:
+  webnet:

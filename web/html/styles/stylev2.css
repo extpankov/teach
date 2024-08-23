@@ -36,12 +36,12 @@ html, body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-image: url('https://avatars.mds.yandex.net/i?id=a7027a59f34e5893d7c92c66ed1eb08e853ed5d80e58bfd7-11953055-images-thumbs&n=13');
     background-size: contain;
     background-repeat: no-repeat;
     filter: grayscale(1);
     background-position: center center;
     -webkit-print-color-adjust: exact;
+    page-break-after: always;
 }
 
 .container {

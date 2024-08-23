@@ -46,7 +46,7 @@ def upload_file():
 
             # Теперь вызываем ваш скрипт для создания PDF
             pdf_filename = f"{timestamp}.html"
-            pdf_dir = "web/pdfs"
+            pdf_dir = "web/userfiles/ready"
             pdf_path = f"{pdf_dir}/{pdf_filename}"
             res = create_pdf(uploaded_file_path, pdf_path)
             if res:

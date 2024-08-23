@@ -3,25 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Информация о студенте</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Информация</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/student_info.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Информация о студенте</h1>
+        <h1 class="main-heading">Информация</h1>
 
         <div class="student-info">
-            <h2>{{ student.first_name }} {{ student.last_name }}</h2>
-            <p><strong>Класс:</strong> {{ student.class_name }}</p>
-            <p><strong>Средний балл:</strong> {{ student.average_score }}</p>
-            <p><strong>Звание:</strong> {{ student.title }}</p>
-            <p><em>{{ student.title_description }}</em></p>
+            <h2>{{ record.student_name }}</h2>
+            <p><strong>Класс:</strong> {{ record.class_name }}</p>
+            <p><strong>Средний балл:</strong> {{ record.average_score }}</p>
+            <div class="title">
+                <p>
+                    <strong>Звание:</strong>
+                    <div class="stars">{{ stars }}</div>
+                    <br>
+                    {{ record.title }}
+                </p>
+                <p class="title-description"><em>{{ record.title_description }}</em></p>
+            </div>
         </div>
 
         <div class="student-grades">
             <h3>Текущие оценки</h3>
-
-            <table>
+            <table class="grades-table">
                 <thead>
                     <tr>
                         <th>Предмет</th>
@@ -30,11 +36,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for subject in current_grades %}
+                    {% for subject in grades %}
                     <tr>
                         <td>{{ subject['subj_name'] }}</td>
-                        <td>{{ ", ".join(subject['marks']) }}</td>
+                        <td>{{ "".join(subject['marks']) }}</td>
                         <td>{{ subject['average'] }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="comment">{{ subject['comment'] }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -42,28 +51,34 @@
         </div>
 
         <div class="student-history">
-            <h3>История успеваемости</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Период</th>
-                        <th>Средний балл</th>
-                        <th>Изменение</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for history in student.history %}
-                    <tr>
-                        <td>{{ history.period }}</td>
-                        <td>{{ history.average_score }}</td>
-                        <td>{{ 'Улучшение' if history.improved else 'Без изменений' }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <h3>История успеваемости</h3>
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Период</th>
+                <th>Средний балл</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in history %}
+            <tr>
+                <td>{{ record.period }}</td>
+                <td>
+                    <a href="https://teach.extpankov.ru/student/{{ record.unique_token }}">
+                        {{ record.average_score }}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-        <a href="{{ url_for('main.index') }}">Вернуться на главную</a>
+
     </div>
+    <footer class="footer">
+        <p>Предложите улучшение или сообщите об ошибке в <a href="https://extpankov.t.me">Телеграме</a></p>
+{#        <p><a href="https://blog.extpankov.ru">Читать подробнее о Тиче</a></p>#}
+    </footer>
 </body>
 </html>

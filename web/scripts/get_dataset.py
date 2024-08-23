@@ -57,6 +57,7 @@ def get_dataset(filename: str):
             subject_dict['average'] = float(item[2])
             student_dict['data'].append(subject_dict)
 
+        student_dict['average'] = sum(subject['average'] for subject in student_dict['data']) / len(student_dict['data'])
         # Добавляем данные ученика в список dataset
         dataset.append(student_dict)
 
