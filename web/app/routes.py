@@ -17,10 +17,12 @@ main = Blueprint('main', __name__)
 USERNAME = 'admin'
 PASSWORD = '9X9BVr10'
 
+
 # Декоратор для базовой аутентификации
 def check_auth(username, password):
     """Функция проверки имени пользователя и пароля"""
     return username == USERNAME and password == PASSWORD
+
 
 def authenticate():
     """Запросить аутентификацию"""
@@ -29,15 +31,20 @@ def authenticate():
         {'WWW-Authenticate': 'Basic realm="Login Required"'}
     )
 
+
 def requires_auth(f):
     """Декоратор для защиты маршрутов"""
+
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
         if not auth or not check_auth(auth.username, auth.password):
             return authenticate()
         return f(*args, **kwargs)
+
     return decorated
+
+
 @main.route('/')
 @requires_auth
 def index():
@@ -124,16 +131,6 @@ def student_info(unique_token):
     # Получаем текущую запись по уникальному токену или возвращаем 404, если не найдено
     record = StudentRecord.query.filter_by(unique_token=unique_token).first_or_404()
 
-    # Преобразуем формат имени: Фамилия Имя Отчество -> Имя Фамилия
-    name = record.student_name.split()
-    record.student_name = f"{name[1]} {name[0]}"
-
-    # Обрезаем средний балл до 4 знаков после запятой
-    record.average_score = str(record.average_score)[:4]
-
-    # Преобразуем строку с оценками (в формате JSON) обратно в список Python
-    grades = json.loads(record.grades)
-
     # Получаем все записи ученика, исключая текущую запись
     history = StudentRecord.query.filter(
         StudentRecord.student_name == record.student_name,
@@ -141,17 +138,17 @@ def student_info(unique_token):
         StudentRecord.id != record.id  # Исключаем текущую запись
     ).all()
 
-    # Создаем контейнер для звездочек, ассоциированных с различными званиями
-    stars_container = {
-        "Великий Магистр Высшего Ранга (5+)": "🌟🌟🌟🌟🌟",
-        "Магистр Всеведущего Разума (5)": "⭐️⭐️⭐️⭐️⭐️",
-        "Архимаг Мудрости (4+)": "⭐️⭐️⭐️⭐",
-        "Великий Хранитель Знаний (4)": "⭐️⭐️⭐️⭐️",
-        "Мастер Откровений (3)": "⭐️⭐️⭐️",
-        "Рыцарь Учебного Пути (3)": "⭐️⭐️⭐️",
-        "Посвящённый Искатель Истины (3)": "⭐️⭐️⭐️",
-        "Неофит Знаний": "⭐️⭐️",
-    }
+    # Преобразуем формат имени: Фамилия Имя Отчество -> Имя Фамилия
+    name = record.student_name.split()
+    record.student_name = f"{name[1]} {name[0]}"
+
+    # Обрезаем средний балл до 4 знаков после запятой
+    record.average_score = float(str(record.average_score)[:4])
+
+    # Преобразуем строку с оценками (в формате JSON) обратно в список Python
+    grades = json.loads(record.grades)
+
+
 
     # Подготовка нового списка с оценками, добавление комментариев
     new_grades = []
@@ -163,18 +160,21 @@ def student_info(unique_token):
                 needed = n
                 break
 
-        if needed.get("fours_needed", 0) > 0:
-            comments.append(get_correct_grade_word(needed['fours_needed'], "четверка"))
+        if needed.get("fours_needed", 0) < 50 and needed.get("fives_needed", 0) < 50:
+            if needed.get("fours_needed", 0) > 0:
+                comments.append(get_correct_grade_word(needed['fours_needed'], "четверка"))
 
-        if needed.get("fives_needed", 0) > 0:
-            comments.append(get_correct_grade_word(needed['fives_needed'], "пятерка"))
+            if needed.get("fives_needed", 0) > 0:
+                comments.append(get_correct_grade_word(needed['fives_needed'], "пятерка"))
 
-        if comments:
-            subj["comment"] = f"Нужно получить {' и '.join(comments)} для повышения оценки в четверти"
+            if comments:
+                subj["comment"] = f"Нужно получить {' и '.join(comments)} для повышения оценки в четверти"
+            else:
+                subj["comment"] = "Вы прекрасны :)"
         else:
-            subj["comment"] = "Вы прекрасны :)"
+            subj["comment"] = f"{name[1]}, старайся, у тебя всё получится!"
 
         new_grades.append(subj)
 
     # Передаем данные и историю успеваемости в шаблон для рендеринга страницы
-    return render_template('student_info.html', record=record, grades=new_grades, stars=stars_container[record.title], history=history)
+    return render_template('student_info.html', record=record, grades=new_grades, history=history)

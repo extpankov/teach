@@ -83,6 +83,7 @@ def calculate_needed_grades(student_data):
     for subject in student_data['subjects']:
         current_average = subject['average']
         grades_needed = {"subject": subject['subj_name'], "fours_needed": 0, "fives_needed": 0}
+        total_marks = len(subject['marks'])
 
         # Если средний балл уже 4.51 и выше, оценки не нужны
         if current_average >= 4.51:
@@ -94,27 +95,29 @@ def calculate_needed_grades(student_data):
 
         # Если средний балл между 4.0 и 4.51, считаем, сколько нужно пятерок
         if current_average >= 4.0:
-            while current_average < 4.51 and max_iterations > 0:
-                grades_needed["fives_needed"] += 1
-                current_average = (current_average * len(subject['marks']) + 5) / (len(subject['marks']) + 1)
-                max_iterations -= 1
+            grades_needed["fives_needed"] = calculate_needed_grades_to_reach_target(current_average, total_marks, 4.51, 5, max_iterations)
 
         # Если средний балл ниже 4.0, считаем, сколько нужно четверок и пятерок
         elif current_average < 4.0:
-            while current_average < 4.0 and max_iterations > 0:
-                grades_needed["fours_needed"] += 1
-                current_average = (current_average * len(subject['marks']) + 4) / (len(subject['marks']) + 1)
-                max_iterations -= 1
-            while current_average < 4.51 and max_iterations > 0:
-                grades_needed["fives_needed"] += 1
-                current_average = (current_average * len(subject['marks']) + 5) / (len(subject['marks']) + 1)
-                max_iterations -= 1
-
-        # Предупреждение, если расчет был остановлен из-за превышения лимита итераций
-        if max_iterations == 0:
-            print(f"Внимание: Расчет необходимых оценок для предмета '{subject['subj_name']}' был остановлен из-за превышения лимита итераций.")
+            grades_needed["fours_needed"] = calculate_needed_grades_to_reach_target(current_average, total_marks, 4.0, 4, max_iterations)
+            current_average = (current_average * total_marks + grades_needed["fours_needed"] * 4) / (total_marks + grades_needed["fours_needed"])
+            total_marks += grades_needed["fours_needed"]
+            grades_needed["fives_needed"] = calculate_needed_grades_to_reach_target(current_average, total_marks, 4.51, 5, max_iterations)
 
         needed_grades.append(grades_needed)
+
+    return needed_grades
+
+def calculate_needed_grades_to_reach_target(current_average, total_marks, target_average, grade_value, max_iterations):
+    needed_grades = 0
+    while current_average < target_average and max_iterations > 0:
+        needed_grades += 1
+        current_average = (current_average * total_marks + grade_value) / (total_marks + 1)
+        total_marks += 1
+        max_iterations -= 1
+
+    if max_iterations == 0:
+        print(f"Внимание: Расчет необходимых оценок был остановлен из-за превышения лимита итераций.")
 
     return needed_grades
 

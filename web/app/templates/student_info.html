@@ -7,78 +7,120 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/student_info.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1 class="main-heading">Информация</h1>
+    <div class="card">
+        <div class="card__container">
+            <div class="card__title"><a href="https://blog.extpankov.ru/?go=tags/teach/">teach.</a></div>
+            <div class="card__name">{{ record.student_name }}</div>
+            <div class="card__info">
+                <div class="card__info-item">
+                    <img class="card__icon" src="{{ url_for('static', filename='imgs/users-solid-1.svg') }}" />
+                    <div class="card__info-text">{{ record.class_name }}</div>
+                </div>
+                <div class="card__info-item">
+                    <img class="card__icon" src="{{ url_for('static', filename='imgs/circle-up-solid-1.svg') }}" />
+                    <div class="card__info-text">{{ record.average_score }}</div>
+                </div>
+            </div>
+                <div class="card__rating">
+                    {% if record.average_score >= 4.9 %}
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-mag.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-mag.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-mag.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-mag.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-mag.svg') }}" />
+                    {% elif record.average_score >= 4.5 %}
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                    {% elif record.average_score >= 4 %}
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-regular.svg') }}" />
+                    {% elif record.average_score >= 3.7 %}
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-regular.svg') }}" />
+                    {% elif record.average_score >= 3.5 %}
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-regular.svg') }}" />
+                    {% else %}
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-solid.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-regular.svg') }}" />
+                        <img class="card__star" src="{{ url_for('static', filename='imgs/star-regular.svg') }}" />
+                    {% endif %}
+                </div>
+            <div class="card__rank">{{ record.title }}</div>
+            <p class="card__description">{{ record.title_description }}</p>
+            <div class="card__view">
+                {% for subject in grades %}
+                    <div class="
+                        card__view-item
+                        {% if subject['average'] >= 4.5 %}
+                            card__view-item--success
+                        {% elif subject['average'] >= 3.5 %}
+                            card__view-item--warning
+                        {% else %}
+                            card__view-item--danger
+                        {% endif %}
+                    ">
+                    <div class="card__subject">{{ subject['subj_name'] }}</div>
+                    <div class="card__score">{{ "".join(subject['marks']) }}</div>
+                    <div class="card__grade">{{ subject['average'] }}</div>
+                    <div class="card__comment">{{ subject['comment'] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="card__history">
+                <div class="card__history-title">История успеваемости:</div>
+                <div class="card__history-items">
+                    {% for record in history %}
+                        <a class="card__history-a" href="https://teach.extpankov.ru/student/{{ record.unique_token }}">
+                            <div class="card__history-item
+                                {% if record.average_score >= 4.5 %}
+                                    card__view-item--success
+                                {% elif record.average_score >= 3.5 %}
+                                    card__view-item--warning
+                                {% else %}
+                                    card__view-item--danger
+                                {% endif %}
+                            ">
+                                <div class="card__history-period">{{ record.period }}</div>
+                                <div class="card__history-grade">{{ record.average_score }}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
 
-        <div class="student-info">
-            <h2>{{ record.student_name }}</h2>
-            <p><strong>Класс:</strong> {{ record.class_name }}</p>
-            <p><strong>Средний балл:</strong> {{ record.average_score }}</p>
-            <div class="title">
-                <p>
-                    <strong>Звание:</strong>
-                    <div class="stars">{{ stars }}</div>
-                    <br>
-                    {{ record.title }}
+            </div>
+            <div class="card__footer">
+                <p class="card__feedback">
+                    <span class="card__text">Предложите улучшение или сообщите об ошибке в </span>
+                    <a href="https://extpankov.t.me" class="card__link">Телеграме</a>
                 </p>
-                <p class="title-description"><em>{{ record.title_description }}</em></p>
+                <p class="card__blog">
+                    <span class="card__text">Читайте подробнее о Тиче в </span>
+                    <a href="https://blog.extpankov.ru/?go=tags/teach/" class="card__link">блоге</a>
+                </p>
+                <p class="card__credits">
+                    © Roman Pankov, 2024<br />
+                    Все права защищены. MIT License.<br />
+                    Программное обеспечение “teach.” имеет открытый исходный код.<br><br>
+                    При несогласии в обработке персональных данных на этом сайте следует <b>немедленно</b> заявить об этом классному руководителю или на почту
+                    <a href="mailto:extpankov@gmail.com">extpankov@gmail.com</a>
+                </p>
             </div>
         </div>
-
-        <div class="student-grades">
-            <h3>Текущие оценки</h3>
-            <table class="grades-table">
-                <thead>
-                    <tr>
-                        <th>Предмет</th>
-                        <th>Оценки</th>
-                        <th>Средний балл</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for subject in grades %}
-                    <tr>
-                        <td>{{ subject['subj_name'] }}</td>
-                        <td>{{ "".join(subject['marks']) }}</td>
-                        <td>{{ subject['average'] }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="comment">{{ subject['comment'] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="student-history">
-    <h3>История успеваемости</h3>
-    <table class="history-table">
-        <thead>
-            <tr>
-                <th>Период</th>
-                <th>Средний балл</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in history %}
-            <tr>
-                <td>{{ record.period }}</td>
-                <td>
-                    <a href="https://teach.extpankov.ru/student/{{ record.unique_token }}">
-                        {{ record.average_score }}
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-
     </div>
-    <footer class="footer">
-        <p>Предложите улучшение или сообщите об ошибке в <a href="https://extpankov.t.me">Телеграме</a></p>
-{#        <p><a href="https://blog.extpankov.ru">Читать подробнее о Тиче</a></p>#}
-    </footer>
 </body>
 </html>

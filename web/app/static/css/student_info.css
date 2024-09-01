@@ -1,44 +1,233 @@
+/* roboto-300 - cyrillic_latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../fonts/roboto-v32-cyrillic_latin-300.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* roboto-regular - cyrillic_latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/roboto-v32-cyrillic_latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* roboto-500 - cyrillic_latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: url('../fonts/roboto-v32-cyrillic_latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+/* roboto-700 - cyrillic_latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/roboto-v32-cyrillic_latin-700.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+
 html, body {
-    margin: 0;
-    box-sizing: border-box;
-    font-family: "Roboto", sans-serif;
-    background-color: #1e1e1e;
-    color: white;
-    text-align: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: white;
+  font-family: "Roboto", Helvetica, sans-serif;
 }
-
-body {
-    padding: 20px;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
 
 a {
-    color: white;
+  color: white;
 }
 
-.main-heading {
-    text-align: center;
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #1e1e1e;
 }
 
-.student-info {
-    text-align: center;
+.card__container {
+  width: 300px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  row-gap: 20px;
 }
 
-.student-grades {
-    text-align: center;
+.card__container * {
+  flex-basis: 100%;
 }
 
-table {
-    border-collapse: collapse;
+.card__title {
+  font-size: 48px;
+  text-align: center;
+}
+
+.card__title a {
+  text-decoration: none;
 }
 
 
-.comment {
-    padding: 10px 0 20px 0;
+.card__name {
+  font-weight: 300;
+  font-size: 24px;
+  text-align: center;
 }
 
-.history-table {
-    width: 100%;
+.card__info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 50px;
+  width: 100%;
+}
+
+.card__info-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.card__icon {
+  width: 30px;
+  height: 24px;
+}
+
+.card__info-text {
+  font-size: 20px;
+  white-space: nowrap;
+}
+
+.card__rating {
+  flex-basis: auto;
+  margin-top: 10px;
+}
+
+.card__star {
+  width: 30px;
+  height: 26.67px;
+}
+
+.card__rank {
+  font-weight: 700;
+  font-size: 36px;
+  text-align: center;
+}
+
+.card__description {
+  font-weight: 300;
+  font-size: 20px;
+  text-align: center;
+}
+
+.card__view {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.card__view-item {
+  padding: 10px;
+  border: 3px solid transparent;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 274px;
+  background: linear-gradient(#1e1e1e 0 0) padding-box;
+}
+
+.card__view-item--success {
+  background: linear-gradient(#1e1e1e 0 0) padding-box, linear-gradient(to right, rgb(0, 199.75, 31.96), rgb(0, 132.81, 21.25)) border-box;
+}
+
+.card__view-item--warning {
+  background: linear-gradient(#1e1e1e 0 0) padding-box, linear-gradient(to right, rgb(202.22, 253.94, 55.02), rgb(76.22, 177.44, 40.66)) border-box;
+}
+
+.card__view-item--danger {
+  background: linear-gradient(#1e1e1e 0 0) padding-box, linear-gradient(to right, rgb(219.94, 46.74, 46.74), rgb(223.68, 227.37, 42.63)) border-box;
+}
+
+.card__subject, .card__score, .card__grade, .card__comment {
+  font-size: 20px;
+  text-align: center;
+}
+
+.card__subject {
+  font-weight: 700;
+}
+
+.card__score, .card__grade, .card__comment {
+  font-weight: 300;
+}
+
+.card__history-items {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.card__history-a {
+  text-decoration: none;
+}
+
+.card__history-item {
+  display: flex;
+  padding: 5px;
+  border-radius: 15px;
+  border: 3px solid transparent;
+  flex-basis: auto;
+  flex-direction: column;
+  text-align: center;
+}
+
+.card__history-period, .card__history-grade {
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*align-items: center;*/
+  /*gap: 5px;*/
+  /*padding: 10px 0;*/
+  /*border-radius: 15px;*/
+}
+
+.card__history-title {
+  font-size: 24px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.card__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.card__footer p {
+  margin-bottom: 10px;
+}
+
+.card__feedback, .card__blog {
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+}
+
+.card__link {
+  text-decoration: underline;
+}
+
+.card__credits {
+  font-weight: 300;
+  font-size: 14px;
+  text-align: center;
 }
