@@ -1,6 +1,7 @@
 **/__pycache__/
 **/.venv/
 **/.idea/
+**/.DS_Store
 **/.env
 web/userfiles/**
 web/instance
