@@ -1,21 +1,25 @@
-import os
 from datetime import datetime
 from flask import Blueprint, render_template, request, jsonify, send_from_directory, redirect, url_for, Response
 from werkzeug.utils import secure_filename
 from scripts.process_data import process_data
 from functools import wraps
-import traceback
+from dotenv import load_dotenv
 from flask import current_app
 import json
+import traceback
+import os
+
 
 from scripts.generate_pdf import PDFGenerator
 from app.models import StudentRecord
 
 main = Blueprint('main', __name__)
 
+load_dotenv()
+
 # Настройте имя пользователя и пароль
-USERNAME = 'admin'
-PASSWORD = '9X9BVr10'
+USERNAME = os.getenv('USERNAME')
+PASSWORD = os.getenv('PASSWORD')
 
 
 # Декоратор для базовой аутентификации

@@ -4,14 +4,18 @@ from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from functools import wraps
+from dotenv import load_dotenv
 import base64
+import os
 
 db = SQLAlchemy()
 migrate = Migrate()
 
+load_dotenv()
+
 # Учетные данные для базовой аутентификации
-USERNAME = 'admin'
-PASSWORD = 'hWqPJSt3E9Qsup4yxXUNRe'
+USERNAME = os.getenv('DB_USER')
+PASSWORD = os.getenv('DB_PASSWORD')
 
 def check_auth(username, password):
     """Функция проверки имени пользователя и пароля"""
