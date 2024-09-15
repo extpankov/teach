@@ -73,8 +73,11 @@ def get_dataset(filename: str):
 
 def calculate_overall_average(student_data):
     total_average = sum(subject['average'] for subject in student_data['subjects'])
-    overall_average = total_average / len(student_data['subjects'])
-    return overall_average
+    try:
+        overall_average = total_average / len(student_data['subjects'])
+        return overall_average
+    except ZeroDivisionError:
+        return 0
 
 
 def calculate_needed_grades(student_data):

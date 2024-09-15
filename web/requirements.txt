@@ -12,6 +12,7 @@ cssutils==2.7.1
 currency-symbols==2.0.3
 et-xmlfile==1.1.0
 Flask==3.0.1
+Flask-Admin==1.6.1
 Flask-Migrate==4.0.7
 Flask-SQLAlchemy==3.1.1
 fonttools==4.43.0
@@ -47,6 +48,7 @@ weasyprint==60.2
 webcolors==1.13
 webencodings==0.5.1
 Werkzeug==3.0.1
+WTForms==3.1.2
 xlrd==2.0.1
 xls2xlsx==0.2.0
 zipp==3.17.0
