@@ -44,7 +44,7 @@ def upload_file():
             uploaded_file_path = f"{upload_dir}/{filename}"
             file.save(uploaded_file_path)
 
-            # Теперь вызываем ваш скрипт для создания PDF
+
             pdf_filename = f"{timestamp}.html"
             pdf_dir = "web/userfiles/ready"
             pdf_path = f"{pdf_dir}/{pdf_filename}"
@@ -70,7 +70,7 @@ def fonts(filename):
     }
 
     if filename not in allowed_files:
-        return abort(404)  # Возвращаем 404, если файл не разрешен
+        return abort(404)
 
     return send_from_directory(directory=styles_directory, path=filename)
 

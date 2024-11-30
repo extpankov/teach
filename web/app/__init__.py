@@ -13,13 +13,15 @@ migrate = Migrate()
 
 load_dotenv()
 
-# Учетные данные для базовой аутентификации
+
 USERNAME = os.getenv('DB_USER')
-PASSWORD = os.getenv('DB_PASSWORD')
+PASSWORD = os.getenv('DB_PASS')
+
 
 def check_auth(username, password):
     """Функция проверки имени пользователя и пароля"""
     return username == USERNAME and password == PASSWORD
+
 
 def authenticate():
     """Запросить аутентификацию"""
@@ -35,7 +37,7 @@ class AuthMiddleware:
     def __call__(self, environ, start_response):
         request_path = environ.get('PATH_INFO', '')
 
-        # Применяем аутентификацию только к /admin и его подмаршрутам
+
         if request_path.startswith('/admin'):
             auth = environ.get('HTTP_AUTHORIZATION')
             if auth:
@@ -54,25 +56,28 @@ class AuthMiddleware:
 def create_app():
     app = Flask(__name__, template_folder='templates', static_folder='static')
 
-    # Конфигурация базы данных
+
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    # Инициализация базы данных и миграций
+    app.secret_key = os.getenv('FLASK_SECRET_KEY')
+
+
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Импортируем модели после инициализации приложения и базы данных
-    from .models import StudentRecord
 
-    # Инициализация Flask-Admin
+    from .models import StudentRecord, Title
+
+
     admin = Admin(app, name='Admin Panel', template_mode='bootstrap3')
     admin.add_view(ModelView(StudentRecord, db.session))
+    admin.add_view(ModelView(Title, db.session))
 
-    # Применение аутентификации ко всему административному интерфейсу
+
     app.wsgi_app = AuthMiddleware(app.wsgi_app)
 
-    # Регистрация маршрутов
+
     from .routes import main as main_blueprint
     app.register_blueprint(main_blueprint)
 

@@ -6,7 +6,7 @@ import qrcode
 from io import BytesIO
 import base64
 import json
-from app.models import StudentRecord  # Import the StudentRecord model
+from app.models import StudentRecord
 
 class PDFGenerator:
     def __init__(self, path, output_path):
@@ -64,7 +64,7 @@ class PDFGenerator:
 
     @staticmethod
     def generate_qr_code(unique_token):
-        url = f"https://teach.extpankov.ru/student/{unique_token}"  # Replace with the actual domain
+        url = f"https://teach.extpankov.ru/student/{unique_token}"
         print(f"link: {url}")
         qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
         qr.add_data(url)
@@ -79,7 +79,7 @@ class PDFGenerator:
 
     def get_qr_code_block(self, data, student_record):
         subjects = ", ".join([f"<b>{self.replace_subjname(d['subj_name'])}</b>" for d in data])
-        qr_code_image = self.generate_qr_code(student_record.unique_token)  # Use the unique token from StudentRecord
+        qr_code_image = self.generate_qr_code(student_record.unique_token)
 
         if subjects == "":
             return f"""
@@ -97,26 +97,29 @@ class PDFGenerator:
             """
 
     def create_html_card(self, row, top):
-        # Найти запись студента по имени
+
         student_record = StudentRecord.query.filter_by(student_name=row["name"], class_name=row["class"]).order_by(
             StudentRecord.id.desc()).first()
 
         if not student_record:
             return "<p>Запись студента не найдена</p>"
 
-        # Преобразовать JSON-строку с оценками обратно в список
+
         grades = json.loads(student_record.grades)
 
-        # Устанавливаем фон в зависимости от места в топе
+
         background_image = ""
-        if not top.empty:  # Проверяем, что DataFrame не пустой
-            # Сравнение по индексам
+        if not top.empty:
+
             if row["name"] == top.iloc[0]["name"]:
                 background_image = 'background-image: url(https://teach.extpankov.ru/prize/1);'
             elif len(top) > 1 and row["name"] == top.iloc[1]["name"]:
                 background_image = 'background-image: url(https://teach.extpankov.ru/prize/2);'
             elif len(top) > 2 and row["name"] == top.iloc[2]["name"]:
                 background_image = 'background-image: url(https://teach.extpankov.ru/prize/3);'
+
+        name = row["name"].split()[:2][::-1]
+        name = name if len(name) <= 18 else [name[0], name[1][0]]
 
         return f"""
         <div class="card" style="{background_image}">
@@ -125,7 +128,7 @@ class PDFGenerator:
                 <div class="header">
                     <div class="header__el name">
                         Имя
-                        <span>{" ".join(row["name"].split()[:2][::-1])}</span>
+                        <span>{" ".join(name)}</span>
                     </div>
                     <div class="header__el class">
                         Класс
@@ -154,13 +157,13 @@ class PDFGenerator:
         """
 
     def generate_html(self):
-        # Сортируем учеников по среднему баллу в порядке убывания
+
         sorted_dataset = self.dataset.sort_values(by="average", ascending=False)
 
-        # Извлекаем топ-3 учеников
+
         top_3_students = sorted_dataset.head(3)
 
-        # Генерируем HTML-карточки для всех учеников, передавая информацию о топ-3
+
         cards_html = ''.join([self.create_html_card(row, top_3_students) for index, row in self.dataset.iterrows()])
 
         html_content = f"""
@@ -169,7 +172,7 @@ class PDFGenerator:
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Документ</title>
-            <link rel="stylesheet" type="text/css" href="#CSS#">
+            <link rel="stylesheet" type="text/css" href="
         </head>
         <body>
             {cards_html}

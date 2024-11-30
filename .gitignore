@@ -5,3 +5,4 @@
 **/.env
 web/userfiles/**
 web/instance
+/web/migrations/

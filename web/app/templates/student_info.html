@@ -17,7 +17,7 @@
                     <div class="card__info-text">{{ record.class_name }}</div>
                 </div>
                 <div class="card__info-item">
-                    <img class="card__icon" src="{{ url_for('static', filename='imgs/circle-up-solid-1.svg') }}" />
+                    <img class="card__icon" src="{{ url_for('static', filename='imgs/gauge-solid.svg') }}" />
                     <div class="card__info-text">{{ record.average_score }}</div>
                 </div>
             </div>
@@ -60,8 +60,8 @@
                         <img class="card__star" src="{{ url_for('static', filename='imgs/star-regular.svg') }}" />
                     {% endif %}
                 </div>
-            <div class="card__rank">{{ record.title }}</div>
-            <p class="card__description">{{ record.title_description }}</p>
+            <div class="card__rank">{{ title.name }}</div>
+            <p class="card__description">{{ title.description }}</p>
             <div class="card__view">
                 {% for subject in grades %}
                     <div class="
@@ -115,8 +115,9 @@
                 <p class="card__credits">
                     © Roman Pankov, 2024<br />
                     Все права защищены. MIT License.<br />
+                    Последний релиз: <a href="https://github.com/extpankov/teach/releases/tag/1.0.1">v1.0.1</a> (23 ноября 2024 года).<br />
                     Программное обеспечение “teach.” имеет открытый исходный код.<br><br>
-                    При несогласии в обработке персональных данных на этом сайте следует <b>немедленно</b> заявить об этом классному руководителю или на почту
+                    При несогласии в обработке персональных данных (ФИО ученика и его успеваемость) на этом сайте следует <b>немедленно</b> заявить об этом классному руководителю или на почту
                     <a href="mailto:extpankov@gmail.com">extpankov@gmail.com</a>
                 </p>
             </div>

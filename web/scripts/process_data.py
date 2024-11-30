@@ -1,7 +1,7 @@
 import openpyxl
 from xls2xlsx import XLS2XLSX
 from app import db
-from app.models import StudentRecord
+from app.models import StudentRecord, Title
 import uuid
 import json
 
@@ -37,7 +37,7 @@ def get_dataset(filename: str):
     for student_data in students_data:
         student_dict = {}
 
-        # Extracting student information
+
         for item in student_data:
             if item[0] == 'ФИО учащегося:':
                 student_dict['name'] = item[1]
@@ -52,7 +52,7 @@ def get_dataset(filename: str):
 
         student_dict['subjects'] = []
 
-        # Extracting subject information
+
         for item in student_data[7:]:
             subject_dict = {}
             subject_dict['subj_name'] = item[0]
@@ -88,19 +88,19 @@ def calculate_needed_grades(student_data):
         grades_needed = {"subject": subject['subj_name'], "fours_needed": 0, "fives_needed": 0}
         total_marks = len(subject['marks'])
 
-        # Если средний балл уже 4.51 и выше, оценки не нужны
+
         if current_average >= 4.51:
             needed_grades.append(grades_needed)
             continue
 
-        # Ограничение количества циклов
+
         max_iterations = 100
 
-        # Если средний балл между 4.0 и 4.51, считаем, сколько нужно пятерок
+
         if current_average >= 4.0:
             grades_needed["fives_needed"] = calculate_needed_grades_to_reach_target(current_average, total_marks, 4.51, 5, max_iterations)
 
-        # Если средний балл ниже 4.0, считаем, сколько нужно четверок и пятерок
+
         elif current_average < 4.0:
             grades_needed["fours_needed"] = calculate_needed_grades_to_reach_target(current_average, total_marks, 4.0, 4, max_iterations)
             current_average = (current_average * total_marks + grades_needed["fours_needed"] * 4) / (total_marks + grades_needed["fours_needed"])
@@ -128,43 +128,51 @@ def calculate_needed_grades_to_reach_target(current_average, total_marks, target
 
 def assign_title(average_score):
     if 4.9 <= average_score <= 5.0:
-        return "Великий Магистр Высшего Ранга (5+)", "Абсолютный повелитель знаний, достигший вершины академического Олимпа. Этот ранг присваивается только истинным мастерам, которые превосходят все ожидания."
+        return "Великий Магистр Высшего Ранга (5+)"
     elif 4.5 <= average_score < 4.9:
-        return "Магистр Всеведущего Разума (5)", "Звание, достойное мудрецов, чьи знания охватывают все аспекты учебных дисциплин. Эти ученики демонстрируют непревзойденное понимание предмета."
+        return "Магистр Всеведущего Разума (5)"
     elif 4.0 <= average_score < 4.5:
-        return "Архимаг Мудрости (4+)", "Ученик, овладевший магией науки и знания. Сильный и целеустремленный, этот ранг говорит о высоком уровне подготовки и стремлении к совершенству."
+        return "Архимаг Мудрости (4+)"
     elif 3.7 <= average_score < 4.0:
-        return "Великий Хранитель Знаний (4)", "Титул, присваиваемый тем, кто с честью и упорством преодолевает все вызовы учебного пути. Ученик уверен в своих знаниях и готов покорять новые вершины."
+        return "Великий Хранитель Знаний (4)"
     elif 3.5 <= average_score < 3.7:
-        return "Мастер Откровений (3)", "Тот, кто видит свет знаний и идет по пути просветления, но ещё нуждается в усиленной практике, чтобы достичь высших сфер."
+        return "Мастер Откровений (3)"
     elif 3.3 <= average_score < 3.5:
-        return "Рыцарь Учебного Пути (3)", "Доблестный воин на пути к знаниям. Хотя испытания продолжаются, этот ученик твёрдо идёт вперед, стремясь к большему."
+        return "Рыцарь Учебного Пути (3)"
     elif 3.0 <= average_score < 3.3:
-        return "Посвящённый Искатель Истины (3)", "Смелый начинающий ученик, только вступивший на великий путь поиска знаний. Этот ранг отмечает тех, кто начинает своё восхождение к вершинам академии."
+        return "Посвящённый Искатель Истины (3)"
     else:
-        return "Неофит Знаний", "Начало великого пути! Неофит только вступил в мир знаний, и ему предстоит пройти через многие испытания, чтобы достичь успеха. Этот ранг – знак готовности к борьбе и совершенствованию."
+        return "Неофит Знаний"
 
 
 def save_student_to_db(student_data):
-    title, title_description = assign_title(student_data['average_score'])
+    title_name = assign_title(student_data['average_score'])
+    title_id = get_title_id_by_name(title_name)
+
+    if title_id is None:
+        raise ValueError(f"Не удалось найти title_id для {title_name}")
+
     needed_grades = calculate_needed_grades(student_data)
 
-    # Подготовка данных для сохранения
     student_record = StudentRecord(
         student_name=student_data['name'],
         class_name=student_data['class'],
         grades=json.dumps(student_data['subjects'], ensure_ascii=False),
-        average_score=student_data['average_score'],
-        title=title,
-        period=student_data['period'],
-        title_description=title_description,
-        needed_grades=json.dumps(needed_grades, ensure_ascii=False)
+        average_score=round(student_data['average_score'], 2),
+        title_id=title_id,
+        needed_grades=json.dumps(needed_grades, ensure_ascii=False),
+        period=student_data['period']
     )
 
     db.session.add(student_record)
     print("session added")
     db.session.commit()
     print("session committed")
+
+
+def get_title_id_by_name(title_name):
+    title = Title.query.filter_by(name=title_name).first()
+    return title.id if title else None
 
 
 def process_data(filename):
@@ -178,7 +186,7 @@ def process_data(filename):
         student_info['name'] = student['name']
         print(student_info['name'])
         student_info['class'] = student['class']
-        student_info['subjects'] = student.get('subjects', [])  # Обработка, если 'subjects' отсутствует
+        student_info['subjects'] = student.get('subjects', [])
         student_info['overall_average'] = calculate_overall_average(student)
         student_info['average_score'] = student_info['overall_average']
 
@@ -190,10 +198,10 @@ def process_data(filename):
         student_info['needed_grades'] = calculate_needed_grades(student)
 
         print(student_info)
-        print("приступаем к сохранению в БД")
+        print("Приступаем к сохранению в БД")
         save_student_to_db(student_info)
         processed_students.append(student_info)
 
 
 if __name__ == "__main__":
-    process_data("your_data_file.xlsx")
+    process_data("/Users/admin/Desktop/projects/teach.extpankov/web/userfiles/20240824120410.xlsx")

@@ -1,4 +1,4 @@
-# teach – геймификация в начальном образовании
+
 
 <p align="center">
    <img src="https://img.shields.io/badge/python-3.10-green" alt="Python Version">

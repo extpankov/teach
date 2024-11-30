@@ -11,18 +11,18 @@ import os
 
 
 from scripts.generate_pdf import PDFGenerator
-from app.models import StudentRecord
+from app.models import StudentRecord, Title
 
 main = Blueprint('main', __name__)
 
 load_dotenv()
 
-# Настройте имя пользователя и пароль
+
 USERNAME = os.getenv('USERNAME')
 PASSWORD = os.getenv('PASSWORD')
 
 
-# Декоратор для базовой аутентификации
+
 def check_auth(username, password):
     """Функция проверки имени пользователя и пароля"""
     return username == USERNAME and password == PASSWORD
@@ -66,7 +66,6 @@ def upload_file():
             file_path = f"userfiles/{filename}"
             file.save(file_path)
 
-            # Обрабатываем данные и генерируем PDF
             pdf_filename = f"{timestamp}.html"
             pdf_path = f"userfiles/ready/{pdf_filename}"
             process_data(file_path)
@@ -77,10 +76,8 @@ def upload_file():
             # except Exception as e:
             #     print("error: ", e)
 
-            # После обработки данных и генерации PDF файла делаем редирект на страницу с PDF
             return jsonify({"pdf_filename": pdf_filename}), 200
 
-    # Если что-то пошло не так, возвращаем ошибку
     return jsonify({"error": "Ошибка обработки файла"}), 400
 
 
@@ -98,7 +95,7 @@ def fonts(filename):
     }
 
     if filename not in allowed_files:
-        return abort(404)  # Возвращаем 404, если файл не разрешен
+        return abort(404)
 
     return send_from_directory(directory=styles_directory, path=filename)
 
@@ -127,34 +124,27 @@ def get_correct_grade_word(number, grade_type):
 
 @main.route('/prize/<step>')
 def get_prize(step):
-    return send_from_directory(directory="./static/imgs", path=f"{step}_new.png")
+    return send_from_directory(directory="./static/imgs", path=f"{step}.png")
 
 
 @main.route('/student/<unique_token>')
 def student_info(unique_token):
-    # Получаем текущую запись по уникальному токену или возвращаем 404, если не найдено
     record = StudentRecord.query.filter_by(unique_token=unique_token).first_or_404()
 
-    # Получаем все записи ученика, исключая текущую запись
     history = StudentRecord.query.filter(
         StudentRecord.student_name == record.student_name,
         StudentRecord.class_name == record.class_name,
-        StudentRecord.id != record.id  # Исключаем текущую запись
+        StudentRecord.id != record.id
     ).all()
 
-    # Преобразуем формат имени: Фамилия Имя Отчество -> Имя Фамилия
     name = record.student_name.split()
     record.student_name = f"{name[1]} {name[0]}"
+    record.average_score = float(str(record.average_score)[:2])
 
-    # Обрезаем средний балл до 4 знаков после запятой
-    record.average_score = float(str(record.average_score)[:4])
+    title = Title.query.filter_by(id=record.title_id).first()
 
-    # Преобразуем строку с оценками (в формате JSON) обратно в список Python
     grades = json.loads(record.grades)
 
-
-
-    # Подготовка нового списка с оценками, добавление комментариев
     new_grades = []
     for subj in grades:
         comments = []
@@ -180,5 +170,4 @@ def student_info(unique_token):
 
         new_grades.append(subj)
 
-    # Передаем данные и историю успеваемости в шаблон для рендеринга страницы
-    return render_template('student_info.html', record=record, grades=new_grades, history=history)
+    return render_template('student_info.html', record=record, grades=new_grades, history=history, title=title)

@@ -32,7 +32,7 @@ def get_dataset(filename: str):
     for student_data in students_data:
         student_dict = {}
 
-        # Извлечение данных о ФИО, классе, учителе, периоде и дате
+
         for item in student_data:
             if item[0] == 'ФИО учащегося:':
                 student_dict['name'] = item[1]
@@ -47,13 +47,13 @@ def get_dataset(filename: str):
 
         student_dict['data'] = []
 
-        # Извлечение данных о предметах, оценках и среднем балле
+
         for item in student_data[7:]:
             subject_dict = {}
             subject_dict['subj_name'] = item[0]
-            # subject_dict['marks'] = item[1]
+
             subject_dict['marks'] = [mark for mark in item[1].split(',') if mark]
-            # subject_dict['average'] = item[2]
+
             subject_dict['average'] = float(item[2])
             student_dict['data'].append(subject_dict)
 
